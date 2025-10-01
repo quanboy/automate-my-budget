@@ -23,7 +23,7 @@ df = pd.DataFrame(data, columns=['Amount', 'Category'])
 # Step 2 - Authorize Google Sheets API
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name('automate-budget-keeping-42ad95124088.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name('', scope)
 client = gspread.authorize(creds)
 
 # Step 3 - Create a new Google Sheet and export data
