@@ -1,4 +1,4 @@
-s eptember
+september
 
 12 groceries
 21 groceries
@@ -42,6 +42,21 @@ september 13
 
 31 food
 
+8 food
+35 food
+22.74 food
+
+14th
+
+25 food
+
+98 paddle board rental
+38 food
+
+65 food
+
+31 food
+
 15 food
 
 17th
@@ -61,3 +76,12 @@ september 13
 14 food
 
 26 air filter
+50 publix
+22 food
+
+20 gas
+
+44 food
+
+16 groceries
+22 food
