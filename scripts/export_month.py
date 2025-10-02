@@ -1,19 +1,48 @@
+import time
+import re
+import os
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.edge.options import Options
-import time
-import re
-import os
 from PIL import Image, ImageChops
 import pytesseract
 from selenium.webdriver.common.keys import Keys
 
-def images_are_equal(img1, img2):
-    return ImageChops.difference(img1, img2).getbbox() is None
+def deduplicate_ocr_text(text, window=5):
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if not lines:
+        return ""
+
+    cleaned_lines = []
+    seen_blocks = set()
+
+    i = 0
+    while i < len(lines):
+        block = tuple(lines[i:i+window])
+
+        if block in seen_blocks:
+            i += window
+            continue
+        cleaned_lines.append(lines[i])
+        seen_blocks.add(block)
+        i += 1
+    return "\n".join(cleaned_lines)
+
+def filter_ocr_text(text):
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    expense_pattern = re.compile(r"^\d+(\.\d+)?\s+\w+")
+    cleaned = [lines[0]]
+    
+    for line in lines[1:]:
+        if expense_pattern.match(line):
+            cleaned.append(line)
+    
+    return "\n".join(cleaned)
+
 
 def switch_to_iframe_with_element(driver, by, value, timeout=20):
     driver.switch_to.default_content()
@@ -29,21 +58,8 @@ def switch_to_iframe_with_element(driver, by, value, timeout=20):
             continue
     raise TimeoutException("Element not found in any iframe")
 
-def find_overlap(prev_img, curr_img, min_overlap=50):
-    """
-    Find vertical overlap between two images.
-    Returns the number of pixels to trim from the top of curr_img.
-    """
-    prev_crop = prev_img.crop((0, prev_img.height - min_overlap, prev_img.width, prev_img.height))
-    for offset in range(min_overlap, curr_img.height, 10):  # step 10px for speed
-        curr_crop = curr_img.crop((0, 0, curr_img.width, offset))
-        # Compare sizes
-        if prev_crop.size == curr_crop.size and ImageChops.difference(prev_crop, curr_crop).getbbox() is None:
-            return offset
-    return 0
 
-def capture_note_image(driver, outfile, max_scrolls=2, wait_seconds=2):
-    try:
+def capture_note_image(driver, max_scrolls=2, wait_seconds=2):
         # Locate visible canvas
         canvas = WebDriverWait(driver, wait_seconds).until(
             lambda d: d.execute_script("""
@@ -56,65 +72,24 @@ def capture_note_image(driver, outfile, max_scrolls=2, wait_seconds=2):
             """)
         )
 
-        screenshots = []
-        prev_img = None
-
+        all_text = ""
         for i in range(max_scrolls):
             filename = f"part_{i}.png"
             canvas.screenshot(filename)
             img = Image.open(filename)
-
-            # Stop if image identical to previous (end of note)
-            if prev_img and ImageChops.difference(prev_img, img).getbbox() is None:
-                print(f"🛑 Reached end of note at part {i}")
-                os.remove(filename)
-                break
-
-            screenshots.append(img)
-            prev_img = img
+            ocr_text = pytesseract.image_to_string(img, lang='eng')
+            all_text += ocr_text + "\n"
 
             # Scroll down with wheel event
             driver.execute_script("""
                 const el = arguments[0];
                 el.dispatchEvent(new WheelEvent('wheel', {deltaY: 600, bubbles: true}));
             """, canvas)
-
             time.sleep(1.5)  # wait for redraw
 
-        # Stitch screenshots with overlap trimming
-        stitched_parts = []
-        prev_img = None
-        for img in screenshots:
-            if prev_img is None:
-                stitched_parts.append(img)
-            else:
-                overlap = find_overlap(prev_img, img)
-                if overlap > 0:
-                    img = img.crop((0, overlap, img.width, img.height))
-                stitched_parts.append(img)
-            prev_img = img
-
-        widths, heights = zip(*(im.size for im in stitched_parts))
-        stitched_height = sum(heights)
-        stitched = Image.new("RGB", (max(widths), stitched_height))
-
-        offset = 0
-        for im in stitched_parts:
-            stitched.paste(im, (0, offset))
-            offset += im.height
-
-        stitched.save(outfile)
-        print(f"✅ Saved full stitched note to {outfile}")
-        return "canvas-wheel-trimmed"
-
-    except Exception as e:
-        print(f"⚠️ Capture failed: {e}")
-        body = WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
-        body.screenshot(outfile)
-        return "body"
-
+        deduped = deduplicate_ocr_text(all_text)
+        filtered = filter_ocr_text(deduped)
+        return filtered
 
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -125,7 +100,7 @@ options.add_argument("--log-level=3")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument("start-maximized")
 
-service = Service(executable_path='msedgedriver.exe')
+service = Service(executable_path='configs/msedgedriver.exe')
 driver = webdriver.Edge(service=service, options=options)
 driver.get('https://www.icloud.com/notes')
 
@@ -154,16 +129,13 @@ for i, note in enumerate(pinned_notes):
         time.sleep(3)
 
         # Try to capture the note
-        img_path = f"note_{i+1}.png"
-        how = capture_note_image(driver, img_path)
-        print(f"Captured note {i+1} using {how}")
+        note_text = capture_note_image(driver)
+        preview = note_text.splitlines()[:5]
+        print("Preview:\n", "\n".join(preview))
 
-        text = pytesseract.image_to_string(Image.open(img_path), lang='eng')
-        print(f"Checked Note {i+1}: {text[:60]}...")
-
-        if "september" in text.lower():
+        if "september" in note_text.lower():
             with open("SEPTEMBER.TXT", "w", encoding="utf-8") as f:
-                f.write(text)
+                f.write(note_text)
             print(f"Found and saved note with 'September' to SEPTEMBER.TXT")
             found = True
             # Stop after finding the first matching note

@@ -3,7 +3,7 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-img = Image.open("test_screenshot.png")
+img = Image.open("images/test_screenshot.png")
 text = pytesseract.image_to_string(img, lang='eng')
 
 print(f"OCR Result: {text}")

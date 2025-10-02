@@ -4,7 +4,7 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 import time
 
-service = Service("msedgedriver.exe")
+service = Service("configs/msedgedriver.exe")
 options = Options()
 options.add_argument("--log-level=3")
 
