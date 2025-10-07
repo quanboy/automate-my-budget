@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "automate-budget-keeping",
+  "private_key_id": "aca1a242f01acae531af987738a680d9d69f2427",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDW3ar70EQTdr34\njTGeeTjb+E+AAi/C75NmS8Owy15h3N5YqSSPraQOoXYI8SH3MmTVxE2H4D1hAOHU\n0frSYEweI8eKhoCnLhLQCY6FPk9eZOeNJPLaa9avJAB5YP29KG9OQWiMEVx3YgMG\nM0nV6NqqYRcTEFrp3acrxdrj3Tf/6FcAsH3rYOklG3MnL9vGpREUwU6AynC/r1Wd\nbjRSm/Sf0d5zbDhRGg+kueflBZkpzFNHOLM2Jf9BA7Om+CSkzknPGBU73nmObQrM\nsTY/ysxhXkMURysVuvlbetpr4kcA2MENf75QcZd/y9gAGq6v0ToP1muNcAtbVoLa\njj5jiCBvAgMBAAECggEAJh8LBIVVZqylFNGcMZUpUOGz3S7GIYxW9wnPLPFQDAXf\nTxSnX3R7zHq6EekSUSTYPhMHfGl9ClZZOuSMX0Hlj11ivEGT1tV2UgG4DwzYkRNO\n/7xD+Bu06br1+JMMQcDISraRIXS9FpNFnRaBbZnUHfF+4gt/TcndLId8h/wKQPU5\nF5RV+OpW8N0K4pJp8M1NC4e6lZPw9r6VsRE6uA7V1geRNRWvgaJIJ/Lhj1Gd0ecn\nEP9Sv9SHpfkmrcwd+6r60NxNAuJolU7VZc7m4+ghigXola+K8opEJUhLAARBzetm\nbCREaSmrZoI3caRg/G4usVzQsYwnyg+T/JYF8CHunQKBgQD1arLpfFnK0F5kFgOj\n++Jq3f+JVNmYqfnGE3wl1twY1quc+K5bXxwnHkf8AMKjCILooPXzLT+8MUXADfgd\nFOE45vHJDFNC+y1LaJFY7YIyCIrZEiOUsF9802TMcSC88Ugd2aaH7anPNBVqigy8\noTUm5/czYPOyFdxTadHekPKnBQKBgQDgIbMVvmFhIBuX6OiSNczyCxpGbOPD5C5x\n94v4MjOD1OtmVQpQddJoZLyMDysabJtUpsIwU/LP3qNUdim+wep6u+SwwRZhxG+y\nFC+c+HoK8sd9WRdoxn2bvUIMhQQDCgBSMN8+bz14vsfa2sYrBMaFPBJ5JfYJ+/dZ\nf/L/VKab4wKBgQCuYyA4yzTe6gt4oS/7EVxFRfRzuIhac8XZmzTninKhb8FIbGkw\n4jeWEG1kQ4IK6VxkQyQhpTCZ4IVIwGRi/dhAX9LFYu2zNdpssCRABZ0zQmCveLUx\nzdY8U9ZXc7eoqubs1yD/i8DTTJY/O1Nroj2rpL9Ckgz4qZIC77nCpkrWpQKBgE0A\nxvpNcj9gPJqwVlcFTOhLkDdp6ca/eoWFOv2GodRFLqr1xJloIWXkVjL4cyKc9bDb\nqhPYg6+PGiZGgokbLmgEbcmcTQhB6O4RqVoQtD1Ws9sI5NYGe9kp6KtMd9hjc0DJ\nsalNppz5TsiOKU9WUK4tuVsOA73iZ1TEdMPsXWFpAoGAJYxOQRdaxnKnhSXJu/5s\nFJzy+2+ZkU201/7nHQB0qchjYe+l0VRQMJfNwGhIsFUtNrMbPUCDupXKtrnt5cZk\nWzkp+CU8cu+5sxuoRSCpJthrrcQOWWHGAp1CBlzbWcOR962N7h/iOyFm9C90QyHN\ncK4hisbGgz7tCgbqguJoq3U=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sheets-access-service-account@automate-budget-keeping.iam.gserviceaccount.com",
+  "client_id": "109647977657310279046",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sheets-access-service-account%40automate-budget-keeping.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

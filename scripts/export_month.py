@@ -12,6 +12,7 @@ from PIL import Image, ImageChops
 import pytesseract
 from selenium.webdriver.common.keys import Keys
 
+# Deduplicate OCR text by removing repeated blocks of lines
 def deduplicate_ocr_text(text, window=5):
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     if not lines:
@@ -43,7 +44,7 @@ def filter_ocr_text(text):
     
     return "\n".join(cleaned)
 
-
+# Switch to the iframe that contains the specified element
 def switch_to_iframe_with_element(driver, by, value, timeout=20):
     driver.switch_to.default_content()
     WebDriverWait(driver, timeout).until(EC.presence_of_all_elements_located((By.TAG_NAME, "iframe")))
@@ -58,7 +59,7 @@ def switch_to_iframe_with_element(driver, by, value, timeout=20):
             continue
     raise TimeoutException("Element not found in any iframe")
 
-
+# Capture note image by scrolling and performing OCR
 def capture_note_image(driver, max_scrolls=2, wait_seconds=2):
         # Locate visible canvas
         canvas = WebDriverWait(driver, wait_seconds).until(
@@ -112,19 +113,20 @@ time.sleep(3)
 
 switch_to_iframe_with_element(driver, By.CSS_SELECTOR, ".list-item")
 
-pinned_notes = WebDriverWait(driver, 15).until(
+all_pinned_notes = WebDriverWait(driver, 15).until(
     EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".list-item.is-pinned"))
     )
+pinned_notes = [note for note in all_pinned_notes if note.is_displayed()]
 print(f"Total notes found: {len(pinned_notes)}")
 
 found = False
 
+# Iterate through pinned notes and look for notes containing a month in header
 for i, note in enumerate(pinned_notes):
     try:
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", note)
         time.sleep(1)
         driver.execute_script("arguments[0].click();", note)
-
         # Wait for the note to load
         time.sleep(3)
 
@@ -133,13 +135,16 @@ for i, note in enumerate(pinned_notes):
         preview = note_text.splitlines()[:5]
         print("Preview:\n", "\n".join(preview))
 
-        if "september" in note_text.lower():
-            with open("SEPTEMBER.TXT", "w", encoding="utf-8") as f:
-                f.write(note_text)
-            print(f"Found and saved note with 'September' to SEPTEMBER.TXT")
-            found = True
-            # Stop after finding the first matching note
-            break
+        months = ["january", "february", "march", "april", "may", "june",
+          "july", "august", "september", "october", "november", "december"]
+        
+        for month in months:
+            if month in note_text.lower():
+                filename = f"{month.upper()}.TXT"
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write(note_text)
+                print(f"Found and saved note with '{month.capitalize()}' → {filename}")
+                found = True
 
     except Exception as e:
         try:
@@ -151,6 +156,6 @@ for i, note in enumerate(pinned_notes):
 
 
 if not found:
-    print("No note with 'September' found.")
+    print("No note containing a month was found among the pinned notes.")
 
 driver.quit()
