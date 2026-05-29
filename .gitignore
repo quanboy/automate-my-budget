@@ -1,0 +1,14 @@
+# Service account credentials — never commit
+configs/
+
+# Generated budget output
+*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor / OS
+.DS_Store
